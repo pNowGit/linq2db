@@ -349,7 +349,7 @@ namespace LinqToDB.Linq.Builder
 									if (mc.IsQueryable(false))
 									{
 										replaceExpr = Expression.Call(
-											Methods.Queryable.AsQueryable.MakeGenericMethod(subElementType), replaceExpr);
+											Methods.Enumerable.AsQueryable.MakeGenericMethod(subElementType), replaceExpr);
 									}
 									return new TransformInfo(replaceExpr, true);
 								}
@@ -363,7 +363,7 @@ namespace LinqToDB.Linq.Builder
 									if (typeof(IQueryable<>).IsSameOrParentOf(mc.Method.GetParameters()[0].ParameterType))
 									{
 										replaceExpr = Expression.Call(
-											Methods.Queryable.AsQueryable.MakeGenericMethod(subElementType), replaceExpr);
+											Methods.Enumerable.AsQueryable.MakeGenericMethod(subElementType), replaceExpr);
 									}
 									var newMethod       = mc.Update(mc.Object, new[]{replaceExpr}.Concat(mc.Arguments.Skip(1)));
 									return new TransformInfo(newMethod, true);
@@ -448,7 +448,7 @@ namespace LinqToDB.Linq.Builder
 				result = expression;
 				if (!typeof(IQueryable<>).IsSameOrParentOf(result.Type))
 				{
-					result = Expression.Call(Methods.Queryable.AsQueryable.MakeGenericMethod(elementType),
+					result = Expression.Call(Methods.Enumerable.AsQueryable.MakeGenericMethod(elementType),
 						expression);
 				}
 
@@ -1467,7 +1467,7 @@ namespace LinqToDB.Linq.Builder
 					var details = queryable.ToList();
 					return details;
 				},
-				async (dc, expr, ps) =>
+				async (dc, expr, ps, ct) =>
 				{
 					//TODO: needed more performant way
 					PrepareParameters(detailQuery.Expression, builder, out var container, out var detailExpression);
@@ -1477,7 +1477,7 @@ namespace LinqToDB.Linq.Builder
 					container.ParameterExpression = expr;
 
 					var queryable = new ExpressionQueryImpl<TD>(dc, detailExpression);
-					var details = await queryable.ToListAsync().ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+					var details = await queryable.ToListAsync(ct).ConfigureAwait(Configuration.ContinueOnCapturedContext);
 					return details;
 				}
 			);
@@ -1513,7 +1513,7 @@ namespace LinqToDB.Linq.Builder
 
 					return eagerLoadingContext;
 				},
-				async (dc, expr, ps) =>
+				async (dc, expr, ps, ct) =>
 				{
 					//TODO: needed more performant way
 					PrepareParameters(expression, builder, out var container, out var detailExpression);
@@ -1523,7 +1523,7 @@ namespace LinqToDB.Linq.Builder
 					container.ParameterExpression = expr;
 
 					var queryable           = new ExpressionQueryImpl<KeyDetailEnvelope<TKey, TD>>(dc, detailExpression);
-					var detailsWithKey      = await queryable.ToListAsync().ConfigureAwait(Common.Configuration.ContinueOnCapturedContext);
+					var detailsWithKey      = await queryable.ToListAsync(ct).ConfigureAwait(Configuration.ContinueOnCapturedContext);
 					var eagerLoadingContext = new EagerLoadingContext<TD, TKey>();
 
 					foreach (var d in detailsWithKey)
