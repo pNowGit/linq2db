@@ -17,8 +17,15 @@ steps:
 - script: dotnet build ./Source/LinqToDb --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(Pipeline.Workspace)/s/Source/LinqToDb/*.csproj'
+    versioningScheme: 'off'
+
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)/s/Source/LinqToDb/bin/Release/netstandard2.1/linq2db.dll'
+    targetPath: 'Source/LinqToDb/bin/Release/netstandard2.1/linq2db.dll'
     artifact: 'LinqToDb'
     publishLocation: 'pipeline'
