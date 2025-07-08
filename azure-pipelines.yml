@@ -19,6 +19,6 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)/Source/LinqToDb/bin/Release/netstandard2.1/linq2db.dll'
+    targetPath: '$(Pipeline.Workspace)/s/Source/LinqToDb/bin/Release/netstandard2.1/linq2db.dll'
     artifact: 'LinqToDb'
     publishLocation: 'pipeline'
