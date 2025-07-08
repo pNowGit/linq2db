@@ -17,11 +17,10 @@ steps:
 - script: dotnet build ./Source/LinqToDb --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
-    packagesToPack: '$(Pipeline.Workspace)/s/Source/LinqToDb/*.csproj'
+    packagesToPack: '(Pipeline.Workspace)/s/Source/LinqToDb/*.csproj'
     versioningScheme: 'off'
 
 - task: PublishPipelineArtifact@1
