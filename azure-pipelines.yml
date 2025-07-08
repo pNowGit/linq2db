@@ -18,7 +18,10 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: 'Source/LinqToDb/LinqToDb.csproj'
-    versioningScheme: 'off'
+    versioningScheme: 'byPrereleaseNumber'
+    majorVersion: '3'
+    minorVersion: '0'
+    patchVersion: '0'
 
 - task: DotNetCoreCLI@2
   inputs:
