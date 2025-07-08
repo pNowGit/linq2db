@@ -14,17 +14,15 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build ./Source/LinqToDb --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
     packagesToPack: 'Source/LinqToDb/LinqToDb.csproj'
     versioningScheme: 'off'
 
-- task: PublishPipelineArtifact@1
+- task: DotNetCoreCLI@2
   inputs:
-    targetPath: 'Source/LinqToDb/bin/Release/netstandard2.1/linq2db.dll'
-    artifact: 'LinqToDb'
-    publishLocation: 'pipeline'
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '0a2dcbf7-420a-46b5-8df5-4e41e29147e2'
